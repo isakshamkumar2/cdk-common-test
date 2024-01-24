@@ -1,6 +1,6 @@
 {
   "name": "@GenFlowly/cdk-commons",
-  "version": "0.0.3",
+  "version": "0.0.6",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -8,7 +8,8 @@
     "prettier-check": "prettier --check .",
     "pretty": "prettier --write .",
     "lint": "eslint src",
-    "lint:fix": "lint -- --fix"
+    "lint:fix": "lint -- --fix",
+    "release": "tsc"
   },
   "keywords": [],
   "author": "",
