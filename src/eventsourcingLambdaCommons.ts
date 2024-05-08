@@ -2,8 +2,10 @@ import { aws_lambda as lambda } from 'aws-cdk-lib';
 import { aws_iam as iam } from 'aws-cdk-lib';
 import { aws_dynamodb as dynamodb } from 'aws-cdk-lib';
 import { aws_sns as sns } from 'aws-cdk-lib';
+import { aws_sqs as sqs } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { aws_lambda_event_sources as lambdaEventSources } from 'aws-cdk-lib';
+import { SqsSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 
 export const createEntityQueryLambda = (
   entityName: string,
@@ -202,6 +204,17 @@ export const createSnapshotPopulatorLambda = (
     snsTopicArn
   );
 
+  const queue = new sqs.Queue(
+    construct,
+    `${entityName}SnapshotPopulatorQueue`,
+    {
+      fifo: true,
+      queueName: `${entityName}SnapshotPopulatorQueue`,
+    }
+  );
+
+  snsTopic.addSubscription(new SqsSubscription(queue));
+
   // Lambda function name derived from entity name
   const lambdaName = `${entityName}SnapshotPopulator`;
 
@@ -216,9 +229,9 @@ export const createSnapshotPopulatorLambda = (
 
   snapshotsTable.grantWriteData(snapshotLambda);
 
-  const snsEventSource = new lambdaEventSources.SnsEventSource(snsTopic);
+  const sqsEventSource = new lambdaEventSources.SqsEventSource(queue);
 
-  snapshotLambda.addEventSource(snsEventSource);
+  snapshotLambda.addEventSource(sqsEventSource);
 
   return snapshotLambda;
 };
