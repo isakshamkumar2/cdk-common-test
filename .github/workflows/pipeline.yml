@@ -7,7 +7,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
     env:
       CI: true
     steps:
@@ -27,7 +26,6 @@ jobs:
   publish:
     needs: build
     runs-on: ubuntu-latest
-    if: github.event.pull_request.merged == true
     env:
       CI: true
     permissions:
