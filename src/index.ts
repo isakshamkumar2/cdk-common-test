@@ -1,2 +1,5 @@
 // index.ts
-export * from './';
+export * from './eventSourcingInfra';
+export * from './eventSourcingCommons';
+export * from './eventSourcingStreamCommons';
+export * from './eventsourcingLambdaCommons';
