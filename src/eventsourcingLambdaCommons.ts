@@ -33,7 +33,9 @@ export const createEntityQueryLambda = (
       code: lambda.Code.fromAsset(handlerPath), // Path to the Lambda code, should be a jar file
       handler: handler, // This should match your actual handler method
       environment: {
-        TABLE_NAME: eventsTable.tableName,
+        EVENTS_TABLE_NAME: eventsTable.tableName,
+        SNAPSHOTS_TABLE_NAME: snapshotsTable.tableName,
+        ENTITY_NAME: entityName,
       },
       timeout: Duration.seconds(300),
       layers: [layer],
@@ -78,7 +80,9 @@ export const createMutationLambda = (
       code: lambda.Code.fromAsset(handlerPath), // Path to the Lambda code, should be a jar file
       handler: handler, // This should match your actual handler method
       environment: {
-        TABLE_NAME: eventsTable.tableName,
+        EVENTS_TABLE_NAME: eventsTable.tableName,
+        SNAPSHOTS_TABLE_NAME: snapshotsTable.tableName,
+        ENTITY_NAME: entityName,
       },
       timeout: Duration.seconds(300),
       layers: [layer],
@@ -122,7 +126,9 @@ export const createFanoutLambda = (
     handler: handler,
     environment: {
       TOPIC_ARN: snsTopic.topicArn,
-      TABLE_NAME: eventsTable.tableName,
+      EVENTS_TABLE_NAME: eventsTable.tableName,
+      SNAPSHOTS_TABLE_NAME: snapshotsTable.tableName,
+      ENTITY_NAME: entityName,
     },
     timeout: Duration.seconds(300),
     layers: [layer],
@@ -188,7 +194,8 @@ export const createSnapshotPopulatorLambda = (
     code: lambda.Code.fromAsset(handlerPath),
     handler: handler,
     environment: {
-      TABLE_NAME: snapshotsTable.tableName,
+      SNAPSHOTS_TABLE_NAME: snapshotsTable.tableName,
+      ENTITY_NAME: entityName,
     },
     timeout: Duration.seconds(300),
     layers: [layer],
