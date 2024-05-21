@@ -10,6 +10,7 @@ export const createFanoutTopic = (
   const topic = new sns.Topic(construct, `${entityName}FanoutTopic`, {
     topicName: topicName,
     fifo: true,
+    contentBasedDeduplication: true,
   });
 
   return topic;
@@ -24,6 +25,7 @@ export const createReplayFanoutTopic = (
   const topic = new sns.Topic(construct, `${entityName}ReplayedFanoutTopic`, {
     topicName: topicName,
     fifo: true,
+    contentBasedDeduplication: true,
   });
 
   return topic;

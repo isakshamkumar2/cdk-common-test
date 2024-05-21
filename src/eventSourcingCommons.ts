@@ -7,6 +7,7 @@ export const createEventsTable = (
   construct: Construct
 ): TableV2 => {
   return new dynamodb.TableV2(construct, entityName + 'Events', {
+    tableName: entityName + 'Events',
     partitionKey: { name: 'entityId', type: dynamodb.AttributeType.STRING },
     sortKey: { name: 'version', type: dynamodb.AttributeType.NUMBER },
     globalSecondaryIndexes: [
@@ -23,7 +24,7 @@ export const createEventsTable = (
       // The read and write capacity is set to take advantage of the DynamoDB Free Tier
       // This is needed to be revisited in the future when traffic patterns change and we run out of free tier
       readCapacity: dynamodb.Capacity.fixed(25),
-      writeCapacity: dynamodb.Capacity.fixed(25),
+      writeCapacity: dynamodb.Capacity.autoscaled({ maxCapacity: 25 }),
     }),
     contributorInsights: true,
     tableClass: dynamodb.TableClass.STANDARD,
@@ -37,6 +38,7 @@ export const createSnapshotsTable = (
   construct: Construct
 ): TableV2 => {
   return new dynamodb.TableV2(construct, entityName + 'Snapshots', {
+    tableName: entityName + 'Snapshots',
     partitionKey: { name: 'entityId', type: dynamodb.AttributeType.STRING },
     sortKey: { name: 'version', type: dynamodb.AttributeType.NUMBER },
     globalSecondaryIndexes: [
@@ -53,7 +55,7 @@ export const createSnapshotsTable = (
     // This is needed to be revisited in the future when traffic patterns change and we run out of free tier
     billing: dynamodb.Billing.provisioned({
       readCapacity: dynamodb.Capacity.fixed(25),
-      writeCapacity: dynamodb.Capacity.fixed(25),
+      writeCapacity: dynamodb.Capacity.autoscaled({ maxCapacity: 25 }),
     }),
     contributorInsights: true,
     tableClass: dynamodb.TableClass.STANDARD,
