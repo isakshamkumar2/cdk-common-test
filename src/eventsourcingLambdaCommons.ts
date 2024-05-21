@@ -7,13 +7,22 @@ import { Construct } from 'constructs';
 import { aws_lambda_event_sources as lambdaEventSources } from 'aws-cdk-lib';
 import { SqsSubscription } from 'aws-cdk-lib/aws-sns-subscriptions';
 
+export const createLambdaLayer = (construct: Construct, layerPath: string) => {
+  return new lambda.LayerVersion(construct, 'BaseLayer', {
+    code: lambda.Code.fromAsset(layerPath),
+    compatibleRuntimes: [lambda.Runtime.JAVA_21],
+    description: 'A layer for Java dependencies',
+  });
+};
+
 export const createEntityQueryLambda = (
   entityName: string,
   handlerPath: string,
   handler: string, // Example 'com.example.MyLambdaHandler::handleRequest'
   construct: Construct,
   eventsTable: dynamodb.TableV2,
-  snapshotsTable: dynamodb.TableV2
+  snapshotsTable: dynamodb.TableV2,
+  layer: lambda.LayerVersion
 ): lambda.Function => {
   // Create the Java Lambda function
   const lambdaFunction = new lambda.Function(
@@ -27,6 +36,7 @@ export const createEntityQueryLambda = (
         TABLE_NAME: eventsTable.tableName,
       },
       timeout: Duration.seconds(300),
+      layers: [layer],
     }
   );
 
@@ -56,7 +66,8 @@ export const createMutationLambda = (
   handler: string, // Example 'com.example.MyLambdaHandler::handleRequest'
   construct: Construct,
   eventsTable: dynamodb.TableV2,
-  snapshotsTable: dynamodb.TableV2
+  snapshotsTable: dynamodb.TableV2,
+  layer: lambda.LayerVersion
 ): lambda.Function => {
   // Create the Java Lambda function
   const lambdaFunction = new lambda.Function(
@@ -70,6 +81,7 @@ export const createMutationLambda = (
         TABLE_NAME: eventsTable.tableName,
       },
       timeout: Duration.seconds(300),
+      layers: [layer],
     }
   );
 
@@ -99,7 +111,8 @@ export const createFanoutLambda = (
   snsTopic: sns.Topic,
   construct: Construct,
   eventsTable: dynamodb.TableV2,
-  snapshotsTable: dynamodb.TableV2
+  snapshotsTable: dynamodb.TableV2,
+  layer: lambda.LayerVersion
 ): lambda.Function => {
   const lambdaName = `${entityName}FanoutConsumer`;
 
@@ -112,6 +125,7 @@ export const createFanoutLambda = (
       TABLE_NAME: eventsTable.tableName,
     },
     timeout: Duration.seconds(300),
+    layers: [layer],
   });
 
   // Grant the Lambda function permission to read from the DynamoDB Stream
@@ -151,7 +165,8 @@ export const createSnapshotPopulatorLambda = (
   handler: string, // Example 'com.example.MyLambdaHandler::handleRequest'
   snsTopic: sns.Topic,
   construct: Construct,
-  snapshotsTable: dynamodb.TableV2
+  snapshotsTable: dynamodb.TableV2,
+  layer: lambda.LayerVersion
 ): lambda.Function => {
   const queue = new sqs.Queue(
     construct,
@@ -176,6 +191,7 @@ export const createSnapshotPopulatorLambda = (
       TABLE_NAME: snapshotsTable.tableName,
     },
     timeout: Duration.seconds(300),
+    layers: [layer],
   });
 
   snapshotsTable.grantWriteData(snapshotLambda);
