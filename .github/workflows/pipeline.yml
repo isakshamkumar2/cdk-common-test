@@ -2,7 +2,7 @@ name: Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -20,8 +20,8 @@ jobs:
         with:
           name: build-artifacts
           path: |
-             ./dist
-             ./package.json
+            ./dist
+            ./package.json
 
   publish:
     needs: build
