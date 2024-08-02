@@ -1,5 +1,5 @@
 {
-  "name": "@genflowly/cdk-commons",
+  "name": "@isakshamkumar2/cdk-common-test",
   "version": "0.1.2",
   "description": "",
   "main": "lib/index.js",
@@ -37,9 +37,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/genflowly/cdk-commons.git"
+    "url": "git://github.com/isakshamkumar2/cdk-common-test.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/@genflowly"
+    "registry": "https://npm.pkg.github.com/@isakshamkumar2"
   }
 }
