@@ -9,6 +9,6 @@
 /dist
 /public
 /build
-
+.npmrc
 # misc
 .DS_Store
